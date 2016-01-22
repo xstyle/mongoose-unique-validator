@@ -54,7 +54,7 @@ module.exports = function(schema, options) {
                         var isSubdocument = typeof doc.ownerDocument === 'function';
                         var parent = isSubdocument ? doc.ownerDocument() : doc;
 
-                        var conditions = [];
+                        var conditions = [{_id: {$ne: doc._id}}];
                         paths.forEach(function(name) {
                             var pathValue = get(doc, isSubdocument ? name.split('.').pop() : name);
 
@@ -84,7 +84,7 @@ module.exports = function(schema, options) {
                         }
 
                         model.where({ $and: conditions }).count(function(err, count) {
-                            respond(((parent.isNew && count === 0) || (!parent.isNew && count <= 1)));
+                            respond((count === 0));
                         });
                     }, pathMessage);
                 }
